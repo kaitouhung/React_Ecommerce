@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { toast } from 'react-toastify'
 import LocalStorage from 'src/constants/localStorage'
 
 class Http {
@@ -16,6 +17,12 @@ class Http {
         return result
       },
       ({ response }) => {
+        if (response.status === 401) {
+          toast.error(response.data.message, {
+            position: 'top-center',
+            autoClose: 3000
+          })
+        }
         const result = { ...response.data, status: response.status }
         return Promise.reject(result)
       }
@@ -40,7 +47,7 @@ class Http {
     return this.instance.post(url, data, config)
   }
   put(url, data, config = null) {
-    return this.instance.post(url, data, config)
+    return this.instance.put(url, data, config)
   }
   delete(url, data, config = null) {
     return this.instance.delete(url, {

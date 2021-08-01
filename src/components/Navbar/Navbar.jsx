@@ -24,7 +24,7 @@ export default function Navbar() {
               <S.UserName>{profile.name || profile.email}</S.UserName>
               <Popover active={activePopover}>
                 <S.UserLink to={path.user}>Tài khoản của tôi</S.UserLink>
-                <S.UserLink to="">Đơn mua</S.UserLink>
+                <S.UserLink to={path.purchase}>Đơn mua</S.UserLink>
                 <S.UserButton onClick={handleLogout}>Đăng suất</S.UserButton>
               </Popover>
             </S.User>

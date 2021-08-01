@@ -1,11 +1,34 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { path } from 'src/constants/path'
 import usePopover from 'src/hooks/usePopover'
+import useQuery from 'src/hooks/useQuery'
+import { formatMoney } from 'src/utils/helper'
 import Navbar from '../Navbar/Navbar'
 import Popover from '../Popover/Popover'
 import * as S from './header.style'
 
 export default function Header() {
   const { activePopover, showPopover, hidePopover } = usePopover()
+  const [searchValue, setSearchValue] = useState('')
+  const history = useHistory()
+  const query = useQuery()
+  const purchases = useSelector(state => state.cart.purchases)
+
+  useEffect(() => {
+    const { name = '' } = query
+    setSearchValue(name)
+  }, [query])
+
+  const onChangeSearch = event => {
+    setSearchValue(event.target.value)
+  }
+
+  const search = event => {
+    event.preventDefault()
+    history.push(path.home + `?name=${searchValue}`)
+  }
   return (
     <S.StyledHeader>
       <div className="container">
@@ -21,8 +44,12 @@ export default function Header() {
               </g>
             </svg>
           </S.Logo>
-          <S.StyledForm>
-            <S.StyledInput placeholder="Tìm kiếm sản phẩm" />
+          <S.StyledForm onSubmit={search}>
+            <S.StyledInput
+              placeholder="Tìm kiếm sản phẩm"
+              value={searchValue}
+              onChange={onChangeSearch}
+            />
             <S.StyledButton type="submit">
               <svg
                 height={19}
@@ -63,21 +90,34 @@ export default function Header() {
                   <circle cx="10.7" cy={23} r="2.2" stroke="none" />
                   <circle cx="19.7" cy={23} r="2.2" stroke="none" />
                 </svg>
-                <S.CartNumberBadge>5</S.CartNumberBadge>
+                {purchases.length > 0 && (
+                  <S.CartNumberBadge>{purchases.length}</S.CartNumberBadge>
+                )}
               </S.CartIcon>
               <Popover active={activePopover}>
                 <S.PopoverContent>
                   <S.PopoverTitle>Sản phẩm mới thêm</S.PopoverTitle>
-                  <S.MiniProductCart>
-                    <S.MiniProductCartImg src="https://cf.shopee.vn/file/dcf7e9976c2ec98592d02cae4ab3b36b_tn" />
-                    <S.MiniProductCartTitle>Bộ chăn ga</S.MiniProductCartTitle>
-                    <S.MiniProductCartPrice>đ700000</S.MiniProductCartPrice>
-                  </S.MiniProductCart>
+                  {purchases.slice(0, 5).map(purchase => (
+                    <S.MiniProductCart key={purchase._id}>
+                      <S.MiniProductCartImg src={purchase.product.image} />
+                      <S.MiniProductCartTitle>
+                        {purchase.product.name}
+                      </S.MiniProductCartTitle>
+                      <S.MiniProductCartPrice>
+                        đ{formatMoney(purchase.product.price)}
+                      </S.MiniProductCartPrice>
+                    </S.MiniProductCart>
+                  ))}
+
                   <S.PopoverFooter>
                     <S.MoreProduct>
-                      <span>1 sản phẩm vào giỏ </span>
+                      {purchases.length > 5 && (
+                        <span>{purchases.length - 5} sản phẩm vào giỏ </span>
+                      )}
                     </S.MoreProduct>
-                    <S.ButtonShowCart to="">Xem giỏ hàng</S.ButtonShowCart>
+                    <S.ButtonShowCart to={path.cart}>
+                      Xem giỏ hàng
+                    </S.ButtonShowCart>
                   </S.PopoverFooter>
                 </S.PopoverContent>
               </Popover>

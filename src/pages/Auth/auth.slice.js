@@ -1,47 +1,61 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import authApi from 'src/api/auth.api'
+import userApi from 'src/api/user.api'
 import LocalStorage from 'src/constants/localStorage'
-import { payloadCretor } from 'src/utils/helper'
+import { payloadCreator } from 'src/utils/helper'
 
 export const register = createAsyncThunk(
   'auth/register',
-  payloadCretor(authApi.register)
+  payloadCreator(authApi.register)
 )
 
 export const login = createAsyncThunk(
   'auth/login',
-  payloadCretor(authApi.login)
+  payloadCreator(authApi.login)
 )
 
 export const logout = createAsyncThunk(
   'auth/logout',
-  payloadCretor(authApi.logout)
+  payloadCreator(authApi.logout)
 )
-
-
 
 const handleAuthFullfilled = (state, action) => {
   const { user, access_token } = action.payload.data
   state.profile = user
   localStorage.setItem(LocalStorage.user, JSON.stringify(state.profile))
-  localStorage.setItem(LocalStorage.accessToken, JSON.stringify(access_token))
+  localStorage.setItem(LocalStorage.accessToken, access_token)
 }
+
+const handleUnAuth = state => {
+  state.profile = {}
+  localStorage.removeItem(LocalStorage.user)
+  localStorage.removeItem(LocalStorage.accessToken)
+}
+//user
+export const updateMe = createAsyncThunk(
+  'auth/updateMe',
+  payloadCreator(userApi.updateMe)
+)
 
 const auth = createSlice({
   name: 'auth',
   initialState: {
     profile: JSON.parse(localStorage.getItem(LocalStorage.user)) || {}
   },
+  reducers: {
+    unauthorize: handleUnAuth
+  },
   extraReducers: {
     [register.fulfilled]: handleAuthFullfilled,
     [login.fulfilled]: handleAuthFullfilled,
-    [logout.fulfilled]: state => {
-      state.profile = {}
-      localStorage.removeItem(LocalStorage.user)
-      localStorage.removeItem(LocalStorage.accessToken)
+    [logout.fulfilled]: handleUnAuth,
+    [updateMe.fulfilled]: (state, action) => {
+      state.profile = action.payload.data
+      localStorage.setItem(LocalStorage.user, JSON.stringify(state.profile))
     }
   }
 })
 
 const authReducer = auth.reducer
+export const unauthorize = auth.actions.unauthorize
 export default authReducer

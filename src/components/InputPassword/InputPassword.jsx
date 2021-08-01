@@ -10,6 +10,10 @@ export default function InputPassword({ ...props }) {
     <div>
       <S.FormControl focus={focus}>
         <input
+          // onChange ={onchange}
+          //value = {value}
+          //name
+          //placeholder
           {...props}
           type={visiblePassword ? 'text' : 'password'}
           onFocus={() => setFocus(true)}
