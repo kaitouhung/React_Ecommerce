@@ -8,7 +8,7 @@
 
 ## Cấu trúc thư mục:
 
-![cautruc](folder.jpg)
+![cautruc](/folder.png)
 
 ## 1. Auth
 
