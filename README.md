@@ -8,7 +8,7 @@
 
 ## Cấu trúc thư mục:
 
-![Alt text](https://drive.google.com/file/d/1De-_il64KjzQLSmromA0sL8-J-VHQONX/view?usp=sharing)
+![cautruc](folder.jpg)
 
 ## 1. Auth
 
