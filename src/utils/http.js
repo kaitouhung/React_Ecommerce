@@ -32,7 +32,7 @@ class Http {
       config => {
         const accessToken = localStorage.getItem(LocalStorage.accessToken)
         if (accessToken) {
-          config.headers.authorizationz = accessToken
+          config.headers.authorization = accessToken
         }
         return config
       },
