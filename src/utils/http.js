@@ -16,14 +16,15 @@ class Http {
         const result = { ...response.data, status: response.status }
         return result
       },
-      ({ response }) => {
-        if (response.status === 401) {
-          toast.error(response.data.message, {
+      error => {
+        //console.log(error.response)
+        if (error.response.status === 401) {
+          toast.error(error.response.data.message, {
             position: 'top-center',
             autoClose: 3000
           })
         }
-        const result = { ...response.data, status: response.status }
+        const result = { ...error.response.data, status: error.response.status }
         return Promise.reject(result)
       }
     )
@@ -31,7 +32,7 @@ class Http {
       config => {
         const accessToken = localStorage.getItem(LocalStorage.accessToken)
         if (accessToken) {
-          config.headers.authorization = accessToken
+          config.headers.authorizationz = accessToken
         }
         return config
       },
